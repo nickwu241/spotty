@@ -7,6 +7,9 @@ npm-debug.log
 *.dev
 .DS_Store
 
+# Secret
+spotty-ruhacks-firebase-adminsdk.json
+
 # Docker
 Dockerfile
 docker-compose.yml
