@@ -38,8 +38,19 @@ express()
     store.dbreset()
     res.send('OK')
   })
-  .post('/image', (req, res) => {
-    imageprocess.send()
+  .get('/image/:path', (req, res) => {
+    const imagePath = req.params.path
+    console.log(imagePath)
+    imageprocess.licenseDetect(imagePath).then(detections => {
+      if (!detections) {
+        return
+      }
+
+      console.log(detections)
+    }).catch(err => {
+      console.error('Failed detecting license:', err)
+    })
+    imageprocess.hasCar(imagePath)
     res.send('OK')
   })
   .post('/users', (req, res) => {

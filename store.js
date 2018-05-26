@@ -97,22 +97,22 @@ const store = {
   }
 }
 
-db.ref('/images').on('child_added', (snapshot) => {
-  const id = snapshot.key()
-  const imagePath = snapshot.val()
-  console.log(`Updated (${id}) imagePath: ${imagePath}`)
-  imageprocess.licenseDetect(imagePath).then(detections => {
-    if (!detections) {
-      return
-    }
+// db.ref('/images').on('child_added', (snapshot) => {
+//   const id = snapshot.key
+//   const imagePath = snapshot.val()
+//   console.log(`Updated (${id}) imagePath: ${imagePath}`)
+//   imageprocess.licenseDetect(imagePath).then(detections => {
+//     if (!detections) {
+//       return
+//     }
 
-    console.log(detections)
-  }).catch(err => {
-    console.err('Failed detecting license:', err)
-  })
-}, (err) => {
-  console.error('Snapshot failed on /images:', err.code)
-})
+//     console.log(detections)
+//   }).catch(err => {
+//     console.err('Failed detecting license:', err)
+//   })
+// }, (err) => {
+//   console.error('Snapshot failed on /images:', err.code)
+// })
 
 db.ref('/spots').on('value', (snapshot) => {
   store.spots = snapshot.val()
