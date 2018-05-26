@@ -9,7 +9,6 @@ const imageprocess = {
         .textDetection(imagePath)
         .then(results => {
           const detections = results[0].textAnnotations
-          const liscensePlate = detections.filter(d => d.)
           resolve(detections)
         })
         .catch(err => {
