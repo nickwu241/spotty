@@ -25,10 +25,9 @@ const imageprocess = {
         .labelDetection(imagePath)
         .then(results => {
           const labels = results[0].labelAnnotations
-
           console.log('Labels:')
           labels.forEach(label => console.log(label.description))
-          resolve(labels)
+          resolve(labels.filter(l => l['description'].includes('car')).length > 0)
         })
         .catch(err => {
           reject(err)

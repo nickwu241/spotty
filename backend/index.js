@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 5000
 
 const DEFAULT_RADIUS = 5000
 
+store.setUpListeners()
+
 express()
   .use(express.static(path.join(__dirname, 'public')))
   .use(bodyParser.json())
@@ -38,19 +40,7 @@ express()
     store.dbreset()
     res.send('OK')
   })
-  .get('/image/:path', (req, res) => {
-    const imagePath = req.params.path
-    console.log(imagePath)
-    imageprocess.licenseDetect(imagePath).then(detections => {
-      if (!detections) {
-        return
-      }
-
-      console.log(detections)
-    }).catch(err => {
-      console.error('Failed detecting license:', err)
-    })
-    imageprocess.hasCar(imagePath)
+  .get('/image', (req, res) => {
     res.send('OK')
   })
   .post('/users', (req, res) => {
