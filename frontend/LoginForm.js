@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { KeyboardAvoidingView, Image, View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar } from 'react-native';
+import { Dimensions, KeyboardAvoidingView, Image, View, Text, TextInput, TouchableOpacity, Alert, Button, StyleSheet, StatusBar } from 'react-native';
+
+
+const { height, width } = Dimensions.get('window');
 
 export default class LoginForm extends Component {
   constructor(props) {
@@ -18,6 +21,7 @@ export default class LoginForm extends Component {
           <Image resizeMode='contain' style={styles.logo} source={require('./src/images/logo.png')} />
         </View>
         <TextInput style={styles.input}
+        underlineColorAndroid='transparent'
           autoCapitalize='none'
           onSubmitEditing={()=> this.passwordInput.focus()}
           onChangeText={this.props.getEmail}
@@ -27,6 +31,7 @@ export default class LoginForm extends Component {
           placeholder='Email'
           palceholderTextColor='rgba(225,225,225,0.7)' />
         <TextInput style={styles.input}
+        underlineColorAndroid='transparent'
           returnKeyType='go'
           ref={(text) => this.passwordInput = text}
           onChangeText={this.props.getPassword}
@@ -37,8 +42,6 @@ export default class LoginForm extends Component {
           onPress={this.props.onButtonPress}>
           <Text style={styles.buttonText}>LOGIN</Text>
         </TouchableOpacity>
-        <Text>{this.state.hide}</Text>
-        <Text style={this.state.hide&&styles.hide}>{this.state.email}</Text>
       </KeyboardAvoidingView>
     )
   }
@@ -46,22 +49,29 @@ export default class LoginForm extends Component {
 
  const styles = StyleSheet.create({
    container: {
-    padding: 2,
-    backgroundColor: '#45bae5'
+    backgroundColor: '#45bae5',
+    justifyContent: 'center',
+    alignItems: 'center'
    },
    loginContainer: {
 
    },
    input: {
-     height: 40,
-     backgroundColor: 'rgba(225,225,225,0.2)',
-     marginBottom: 10,
-     padding: 10,
+     height:40,
+     width: 0.8*width,
+     // backgroundColor: '#fff',
+     borderBottomWidth: 0.5,
+     borderBottomColor: 'rgba(225,225,225,0.7)',
+     // padding: 2,
+     marginTop: 2,
      color: '#fff'
    },
    buttonContainer: {
+     marginTop: 10,
+     alignItems: 'center',
+     width: 0.6*width,
      backgroundColor: '#2980b6',
-     paddingVertical: 15
+     paddingVertical: 2
    },
    buttonText: {
      color: '#fff',
@@ -69,10 +79,7 @@ export default class LoginForm extends Component {
      fontWeight: '700'
    },
    logo: {
-     width: 100,
-     height: 100
-   },
- hide:{
-   display: 'none'
- }
+     width: 200,
+     height: 200
+   }
  })

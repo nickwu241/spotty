@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import LoginForm from './LoginForm.js';
 
+
 const user = {
   email: '123@abc.com',
   password: '123456'
@@ -40,6 +41,7 @@ export default class Login extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     backgroundColor: '#45bae5',
     alignItems: 'center',
     justifyContent: 'center',
