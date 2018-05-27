@@ -1,0 +1,560 @@
+[
+    {
+        "id": "a6b98d86.4ce1e",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ae48ee08.629e9",
+        "type": "inject",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 109.10002136230469,
+        "y": 210,
+        "wires": [
+            [
+                "513d1890.5fa3e8"
+            ]
+        ]
+    },
+    {
+        "id": "12c4990f.416857",
+        "type": "serial in",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "serial": "4249e567.711cdc",
+        "x": 98.09999084472656,
+        "y": 294,
+        "wires": [
+            [
+                "d1c0dda0.e8e6f"
+            ]
+        ]
+    },
+    {
+        "id": "c947b1b5.f8115",
+        "type": "debug",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 875.1000366210938,
+        "y": 104,
+        "wires": []
+    },
+    {
+        "id": "7d185bc8.61f684",
+        "type": "switch",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "property": "unit",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "temp",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "humid",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Ping",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 399.10009765625,
+        "y": 359,
+        "wires": [
+            [
+                "3c20aa9c.d18c76",
+                "7d66277.f48dfd8",
+                "3491c2e9.f5d91e"
+            ],
+            [
+                "ff31140d.3cdd78",
+                "b8c6dc3.98a5c2",
+                "5ebf28.0f07e0d8"
+            ],
+            [
+                "623872dd.7726cc",
+                "4e32111f.21ab38",
+                "90e27dd2.0c2e4"
+            ]
+        ]
+    },
+    {
+        "id": "d1c0dda0.e8e6f",
+        "type": "function",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "func": "var unit = msg.payload.split(\" \", 1);\nif(unit == 'Temperature:'){\n    msg.payload = msg.payload.substring(13);\n    msg.unit = 'temp';\n    return msg;\n}\nelse if (unit == 'Humidity:'){\n    \n    msg.payload = msg.payload.substring(10);\n    msg.unit = 'humid';\n    return msg;\n}\nelse{\n    \n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 270.1000061035156,
+        "y": 295.00000381469727,
+        "wires": [
+            [
+                "7d185bc8.61f684"
+            ]
+        ]
+    },
+    {
+        "id": "3c20aa9c.d18c76",
+        "type": "ui_chart",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "group": "a29fd34e.50602",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "15",
+        "ymax": "40",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 758.1000366210938,
+        "y": 271.6000061035156,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "ff31140d.3cdd78",
+        "type": "ui_chart",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "group": "a29fd34e.50602",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Humidity",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 564.1000366210938,
+        "y": 326.6000061035156,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "7d66277.f48dfd8",
+        "type": "mqtt out",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "topic": "Temperature",
+        "qos": "",
+        "retain": "",
+        "broker": "5a4f2faa.08ce78",
+        "x": 758.5,
+        "y": 220.99998474121094,
+        "wires": []
+    },
+    {
+        "id": "b8c6dc3.98a5c2",
+        "type": "mqtt out",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "topic": "Humidity",
+        "qos": "",
+        "retain": "",
+        "broker": "5a4f2faa.08ce78",
+        "x": 565.5,
+        "y": 371,
+        "wires": []
+    },
+    {
+        "id": "fa84bbfb.7f64b8",
+        "type": "serial in",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "serial": "3c325e3e.a87522",
+        "x": 88.5,
+        "y": 423.4000244140625,
+        "wires": [
+            [
+                "713a6718.06f0c8"
+            ]
+        ]
+    },
+    {
+        "id": "713a6718.06f0c8",
+        "type": "function",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "func": "var unit = msg.payload.split(\" \", 1);\nif(unit == 'Ping:'){\n    msg.payload = msg.payload.substring(6);\n    msg.unit = 'Ping';\n    return msg;\n}\nelse{\n    \n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 266.20001220703125,
+        "y": 419.20001220703125,
+        "wires": [
+            [
+                "7d185bc8.61f684"
+            ]
+        ]
+    },
+    {
+        "id": "623872dd.7726cc",
+        "type": "mqtt out",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "topic": "Distance",
+        "qos": "",
+        "retain": "",
+        "broker": "5a4f2faa.08ce78",
+        "x": 523.5,
+        "y": 427,
+        "wires": []
+    },
+    {
+        "id": "4e32111f.21ab38",
+        "type": "ui_chart",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "group": "a29fd34e.50602",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Distance",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "300",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 473.5,
+        "y": 483.4000244140625,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "513d1890.5fa3e8",
+        "type": "camerapi-takephoto",
+        "z": "a6b98d86.4ce1e",
+        "filemode": "0",
+        "filename": "",
+        "filedefpath": "1",
+        "filepath": "",
+        "fileformat": "jpeg",
+        "resolution": "5",
+        "rotation": "0",
+        "fliph": "0",
+        "flipv": "0",
+        "brightness": "50",
+        "contrast": "0",
+        "sharpness": "0",
+        "imageeffect": "none",
+        "name": "pImage.jpeg",
+        "x": 294.49998474121094,
+        "y": 182,
+        "wires": [
+            [
+                "83de2cbf.352de8"
+            ]
+        ]
+    },
+    {
+        "id": "83de2cbf.352de8",
+        "type": "function",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "func": "var request = {\n    'filename': msg.filename,\n    'url': 'https://www.googleapis.com/upload/storage/v1/b/spotty-205321.appspot.com/o?uploadType=media&name=' + msg.filename,\n    'headers': {\n        'Content-Type': 'image/jpeg'\n    },\n    'payload': msg.payload\n}\nmsg = request\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 256.5,
+        "y": 60.399993896484375,
+        "wires": [
+            [
+                "77a01dbe.a319fc"
+            ]
+        ]
+    },
+    {
+        "id": "77a01dbe.a319fc",
+        "type": "http request",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "url": "",
+        "tls": "",
+        "x": 412.5,
+        "y": 59.399993896484375,
+        "wires": [
+            [
+                "540d6fff.dcf4a"
+            ]
+        ]
+    },
+    {
+        "id": "89e72f37.73faf",
+        "type": "firebase modify",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/image/1",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 824.5,
+        "y": 38,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "540d6fff.dcf4a",
+        "type": "function",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "func": "msg['payload'] = 'https://storage.googleapis.com/spotty-205321.appspot.com/' + msg.filename;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 564,
+        "y": 60,
+        "wires": [
+            [
+                "89e72f37.73faf",
+                "cc4a9e57.01cd8",
+                "c947b1b5.f8115"
+            ]
+        ]
+    },
+    {
+        "id": "3491c2e9.f5d91e",
+        "type": "firebase modify",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/device/1/temperature",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 928,
+        "y": 312,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5ebf28.0f07e0d8",
+        "type": "firebase modify",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/device/1/humidity",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 906,
+        "y": 363,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "90e27dd2.0c2e4",
+        "type": "firebase modify",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/device/1/distance",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 810,
+        "y": 462,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e869ec4a.64222",
+        "type": "mqtt in",
+        "z": "a6b98d86.4ce1e",
+        "name": "",
+        "topic": "Alexa",
+        "qos": "2",
+        "broker": "5a4f2faa.08ce78",
+        "x": 112.5,
+        "y": 129.39999389648438,
+        "wires": [
+            [
+                "513d1890.5fa3e8"
+            ]
+        ]
+    },
+    {
+        "id": "cc4a9e57.01cd8",
+        "type": "ui_template",
+        "z": "a6b98d86.4ce1e",
+        "group": "a29fd34e.50602",
+        "name": "Camera",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "format": "<img src=\"msg.payload\"/>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "templateScope": "local",
+        "x": 696.5,
+        "y": 139,
+        "wires": [
+            [
+                "c947b1b5.f8115"
+            ]
+        ]
+    },
+    {
+        "id": "4249e567.711cdc",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/ttyACM0",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    },
+    {
+        "id": "a29fd34e.50602",
+        "type": "ui_group",
+        "z": "",
+        "name": "Stats",
+        "tab": "ff1f3e42.141a3",
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "5a4f2faa.08ce78",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "EMQTT",
+        "broker": "192.168.1.144",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "3c325e3e.a87522",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/ttyUSB0",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": false
+    },
+    {
+        "id": "ff1f3e42.141a3",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Home",
+        "icon": "dashboard"
+    }
+]
