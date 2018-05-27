@@ -128,11 +128,11 @@ const store = {
       }).catch(err => {
         console.error('Failed detecting license:', err)
       })
-      imageprocess.hasCar(imagePath).then(hasCar => {
-        console.log('Has car:', hasCar)
-      }).catch(err => {
-        console.error('Failed detecting car:', err)
-      })
+      // imageprocess.hasCar(imagePath).then(hasCar => {
+      //   console.log('Has car:', hasCar)
+      // }).catch(err => {
+      //   console.error('Failed detecting car:', err)
+      // })
       db.ref(`/image/${id}`).remove()
     }, (err) => {
       console.error('Snapshot failed on /images:', err.code)
