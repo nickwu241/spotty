@@ -112,6 +112,7 @@ const mockSpots = [{
 const store = {
   device: [],
   spots: [],
+  visionMode: imageprocess.api,
   setUpListeners: function () {
     console.log('Setting up db listeners...')
     db.ref('/image').on('child_added', snapshot => {
@@ -119,7 +120,7 @@ const store = {
       const imagePath = snapshot.val()
       console.log(`Updated (${id}) imagePath: ${imagePath}`)
 
-      imageprocess.licenseDetect(imagePath).then(plates => {
+      store.visionMode.licenseDetect(imagePath).then(plates => {
         console.log('plates:', plates)
         if (plates.length == 0) {
           return
@@ -128,7 +129,7 @@ const store = {
       }).catch(err => {
         console.error('Failed detecting license:', err)
       })
-      // imageprocess.hasCar(imagePath).then(hasCar => {
+      // store.visionMode.hasCar(imagePath).then(hasCar => {
       //   console.log('Has car:', hasCar)
       // }).catch(err => {
       //   console.error('Failed detecting car:', err)
@@ -158,6 +159,15 @@ const store = {
         store.spots[1]['device'] = store.device[1]
       }
     })
+  },
+  setUpVisionMode: function (mode) {
+    // mode: 'api' or 'local'.
+    if (mode === 'api') {
+      this.visionMode = imageprocess.api
+    }
+    if (mode === 'local') {
+      this.visionMode = imageprocess.local
+    }
   },
   registerSpot: function (spot) {
     console.log(this.spots)

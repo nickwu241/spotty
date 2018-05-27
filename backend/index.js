@@ -10,7 +10,13 @@ const DEFAULT_RADIUS = 5000
 
 store.setUpListeners()
 
+
 express()
+  .use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  })
   .use(express.static(path.join(__dirname, 'public')))
   .use(bodyParser.json())
   .set('views', path.join(__dirname, 'views'))
@@ -38,6 +44,11 @@ express()
   })
   .post('/dbreset', (req, res) => {
     store.dbreset()
+    res.send('OK')
+  })
+  .post('/mode/:mode', (req, res) => {
+    console.log(`/mode/${req.params.mode}`)
+    store.setUpVisionMode(req.params.mode)
     res.send('OK')
   })
   .get('/image', (req, res) => {
