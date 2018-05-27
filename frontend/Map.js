@@ -3,6 +3,7 @@ import { Scrollview, Dimensions, StyleSheet, Text, View, Image, ScrollView, Refr
 import MapView from 'react-native-maps';
 import { Easing, Animated, AppRegistry, TextInput, Button, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback,} from 'react-native';
 import Polyline from '@mapbox/polyline';
+import axios from 'axios';
 const { width, height } = Dimensions.get("window");
 
 const CARD_HEIGHT = height / 4;
@@ -208,7 +209,7 @@ export default class Map extends Component {
   }
 
    _onPressButton(){
-   
+    console.log("hi")
     var coord = this.state.latitude.toString() + ', ' + this.state.longitude.toString()
     var dest = this.state.selectMarkers[0].latitude.toString() + ', ' + this.state.selectMarkers[0].longitude.toString()
     console.log(coord)
@@ -233,6 +234,37 @@ export default class Map extends Component {
         return error
     }
   }
+  fetchValues() {
+  fetch('https://87c9f479.ngrok.io/spots?lat=43.6586789&lon=-79.3791235')
+    .then((response) => response.json())
+    .then((responseJson) => {
+      return responseJson;
+    })
+    .then(obj => {
+      this.state.markers = []
+        for(var i=0; i < obj.length; i++) {
+          this.state.markers.push(
+              {
+                  uniqueId : obj[i].id,
+                  coordinate: {
+                    latitude: obj[i].latitude,
+                    longitude: obj[i].longitude,
+                  },
+                  title: obj[i].title,
+                  description: obj[i].description,
+                  price: obj[i].price,
+                  selected: false,
+                  image: obj[i].image,
+              }
+            )
+        }
+        this.forceUpdate();
+        console.log(this.state.markers)
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
    springAnimation = () => {
     Animated.spring(this.state.springValue, {
       toValue: 4,
@@ -361,7 +393,7 @@ export default class Map extends Component {
             </View>
             <Button 
               style = {{flex: 0, width: 20}}
-              onPress={() => this.move(this.state.location, this.state.destination)}
+              onPress={this.fetchValues.bind(this)}
               title="Go!"
               color="#841584"
             />
