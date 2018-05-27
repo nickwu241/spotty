@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Scrollview, Dimensions, StyleSheet, Text, View, Image, ScrollView, RefreshControl} from 'react-native';
 import MapView from 'react-native-maps';
 import { Easing, Animated, AppRegistry, TextInput, Button, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback,} from 'react-native';
+import Polyline from '@mapbox/polyline';
 const { width, height } = Dimensions.get("window");
 
 const CARD_HEIGHT = height / 4;
@@ -106,9 +107,10 @@ export default class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: null,
-      longitude: null,
+      latitude: 43.7860579,
+      longitude: -79.349437,
       error:null,
+      coords: [],
       selected: 0,
       radius: 15,
       fadeAnim: new Animated.Value(20),
@@ -206,8 +208,31 @@ export default class Map extends Component {
   }
 
    _onPressButton(){
-    console.log("MOVE");
+   
+    var coord = this.state.latitude.toString() + ', ' + this.state.longitude.toString()
+    var dest = this.state.selectMarkers[0].latitude.toString() + ', ' + this.state.selectMarkers[0].longitude.toString()
+    console.log(coord)
+    this.getDirections(coord, dest)
    }
+
+   async getDirections(startLoc, destinationLoc) {
+    try {
+        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }`)
+        let respJson = await resp.json();
+        let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+        let coords = points.map((point, index) => {
+            return  {
+                latitude : point[0],
+                longitude : point[1]
+            }
+        })
+        this.setState({coords: coords})
+        return coords
+        this.forceUpdate();
+    } catch(error) {
+        return error
+    }
+  }
    springAnimation = () => {
     Animated.spring(this.state.springValue, {
       toValue: 4,
@@ -275,6 +300,11 @@ export default class Map extends Component {
               </MapView.Marker>
             );
         })}  
+        <MapView.Polyline 
+            coordinates={this.state.coords}
+            strokeWidth={2}
+            strokeColor="red"/>
+
         </MapView>
         <Animated.ScrollView
           horizontal
@@ -312,7 +342,7 @@ export default class Map extends Component {
             </TouchableOpacity>
           ))}
         <TouchableNativeFeedback
-          onPress={this._onPressButton}
+          onPress={this._onPressButton.bind(this)}
           background={TouchableNativeFeedback.SelectableBackground()}>
         <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
           <Text style={{margin: 30}}>Button</Text>
@@ -337,19 +367,7 @@ export default class Map extends Component {
             />
           </View>
         </View>
-        <FadeInView2>
-          <View style = {styles.description}>
-            <Image
-                source={this.state.markers[this.state.selected].image}
-                style={styles.boardImage}
-                resizeMode="cover"
-              />
-            <View style={styles.texts}>
-              <Text> Price: {this.state.markers[this.state.selected].price} </Text>
-              <Text> Description: {this.state.markers[this.state.selected].description} </Text>
-            </View>
-          </View>
-        </FadeInView2>
+        
         <FadeInView 
           ref={component => this._mainMenu = component}
         > 
