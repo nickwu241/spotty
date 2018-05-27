@@ -52,6 +52,10 @@ express()
     res.send('OK')
   })
   .get('/image', (req, res) => {
+    // const path = 'https://storage.googleapis.com/spotty-205321.appspot.com/pic_a463e446-d20c-418f-93f6-97d44efeb347.jpg'
+    // const path = 'mock_pictures/lp-LAW-394.jpg'
+    const path = 'mock_pictures/car.jpg'
+    imageprocess.api.licenseDetect(path).then(l => console.log(l))
     res.send('OK')
   })
   .post('/users', (req, res) => {

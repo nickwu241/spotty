@@ -7,6 +7,8 @@ firebase.initializeApp({
 })
 const db = firebase.database()
 
+const VALID_PLATE = 'LAW-394'
+
 const Images = [{
     uri: "https://i.imgur.com/HPLqOMP.jpg"
   },
@@ -117,15 +119,36 @@ const store = {
     console.log('Setting up db listeners...')
     db.ref('/image').on('child_added', snapshot => {
       const id = snapshot.key
+      if (id === '0' || id === 0) {
+        return
+      }
       const imagePath = snapshot.val()
       console.log(`Updated (${id}) imagePath: ${imagePath}`)
 
       store.visionMode.licenseDetect(imagePath).then(plates => {
+        const OFF = 0
+        const ON = 1
+        const INVALID = '/license_invalid'
+        const VALID = '/license_valid'
+        const TIMEOUT = 3000
+
+        let key = VALID
+
         console.log('plates:', plates)
-        if (plates.length == 0) {
-          return
+        if (plates.length == 0 || plates[0]['description'] !== VALID_PLATE) {
+          console.log('LICENSE INVALID')
+          key = INVALID
+        } else {
+          console.log('LICENSE VALID')
+          key = VALID
+          console.log('plate:', plates[0])
         }
-        console.log('plate:', plates[0])
+        db.ref(key).set(ON)
+        setTimeout(() => {
+          console.log('Turn off LED...')
+          db.ref(key).set(OFF)
+        }, TIMEOUT)
+
       }).catch(err => {
         console.error('Failed detecting license:', err)
       })
