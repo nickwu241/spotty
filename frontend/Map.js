@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Scrollview, Dimensions, StyleSheet, Text, View, Image, ScrollView, RefreshControl} from 'react-native';
 import MapView from 'react-native-maps';
 import { Easing, Animated, AppRegistry, TextInput, Button, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback,} from 'react-native';
-
 const { width, height } = Dimensions.get("window");
 
 const CARD_HEIGHT = height / 4;
@@ -47,9 +46,54 @@ class FadeInView extends Component {
           height: fadeAnim,        
         }}
       >
-            <TouchableHighlight onPress={this.toggle.bind(this)} underlayColor="white">
+            <TouchableHighlight onPress={this.toggle.bind(this)} underlayColor="white" style = {{borderTopWidth: 1, height: 20}}>
               <View style={styles.button}>
-                <Text style={styles.buttonText}>More Info</Text>
+                <Text style={styles.buttonText}>Detailed View</Text>
+              </View>
+            </TouchableHighlight>
+        {this.props.children}
+      </Animated.View>
+    );
+  }
+}
+
+class FadeInView2 extends Component {
+  state = {
+    fadeAnim: new Animated.Value(20),
+    expanded: true,
+    text:"No"
+  }
+  toggle(){
+      let initialValue    = this.state.expanded? 20 : 250,
+          finalValue      = this.state.expanded? 250 : 20;
+
+      this.setState({
+          expanded : !this.state.expanded
+      });
+
+      this.state.fadeAnim.setValue(initialValue);
+      Animated.spring(
+          this.state.fadeAnim,
+          {
+              toValue: finalValue
+          }
+      ).start();
+  }
+  
+  render() {
+    let { fadeAnim } = this.state;
+    
+    return (
+      <Animated.View                 
+        style={{
+          top: 0,
+          backgroundColor: "white",
+          height: fadeAnim,        
+        }}
+      >
+            <TouchableHighlight onPress={this.toggle.bind(this)} underlayColor="white" style = {{borderTopWidth: 1, height: "auto"}}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText}>Driveway Settings</Text>
               </View>
             </TouchableHighlight>
         {this.props.children}
@@ -267,7 +311,6 @@ export default class Map extends Component {
               </View>
             </TouchableOpacity>
           ))}
-
         <TouchableNativeFeedback
           onPress={this._onPressButton}
           background={TouchableNativeFeedback.SelectableBackground()}>
@@ -294,6 +337,19 @@ export default class Map extends Component {
             />
           </View>
         </View>
+        <FadeInView2>
+          <View style = {styles.description}>
+            <Image
+                source={this.state.markers[this.state.selected].image}
+                style={styles.boardImage}
+                resizeMode="cover"
+              />
+            <View style={styles.texts}>
+              <Text> Price: {this.state.markers[this.state.selected].price} </Text>
+              <Text> Description: {this.state.markers[this.state.selected].description} </Text>
+            </View>
+          </View>
+        </FadeInView2>
         <FadeInView 
           ref={component => this._mainMenu = component}
         > 
@@ -351,7 +407,7 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'rgba(0,0,0,0.2)',
     position: "absolute",
-    bottom: 30,
+    bottom: 40,
     left: 0,
     right: 0,
     paddingVertical: 10,
@@ -417,6 +473,7 @@ const styles = StyleSheet.create({
     display: "flex", 
     width: "100%",
     height: "100%",
+    padding: 10,
     flexDirection: "row",
   },
   boardImage: {
@@ -425,11 +482,20 @@ const styles = StyleSheet.create({
     height: "100%",
     alignSelf: "center",
     flexGrow: 2,
+    padding: 10,
   },
   texts: {
     flex:1,
     width: "100%",
     height: "100%", 
     flexGrow: 2,
-  }
+    padding: 10,
+  },
+  button: {
+    marginBottom: 30,
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    width: "100%"
+    
+  },
 });
