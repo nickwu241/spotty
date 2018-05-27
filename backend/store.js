@@ -112,6 +112,7 @@ const mockSpots = [{
 ]
 
 const store = {
+  spotTaken: false,
   device: [],
   spots: [],
   visionMode: imageprocess.api,
@@ -141,6 +142,11 @@ const store = {
         } else {
           console.log('LICENSE VALID')
           key = VALID
+          store.spotTaken = true
+          setTimeout(() => {
+            console.log('spotTaken = false')
+            store.spotTaken = false
+          }, 30000)
           console.log('plate:', plates[0])
         }
         db.ref(key).set(ON)

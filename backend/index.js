@@ -34,7 +34,11 @@ express()
       res.send(store.spots)
     } else {
       const spots = store.spots.filter(spot => geolib.getDistance(spot, area) < radius)
-      res.send(spots)
+      if (spots.length > 0 && store.spotTaken) {
+        res.send(spots.slice(1))
+      } else {
+        res.send(spots)
+      }
     }
   })
   .post('/spots', (req, res) => {
@@ -57,6 +61,15 @@ express()
     const path = 'mock_pictures/car.jpg'
     imageprocess.api.licenseDetect(path).then(l => console.log(l))
     res.send('OK')
+  })
+  .get('/taken/:bool', (req, res) => {
+    if (req.params.bool === '0') {
+      store.spotTaken = false
+    }
+    if (req.params.bool === '1') {
+      store.spotTaken = true
+    }
+    res.send(store.spotTaken)
   })
   .post('/users', (req, res) => {
     console.log(req.body)
