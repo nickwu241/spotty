@@ -22,7 +22,7 @@ express()
       latitude: parseFloat(req.query.lat) || 0.0,
       longitude: parseFloat(req.query.lon) || 0.0
     }
-    console.log('/spots', area, radius)
+    console.log(Date.now(), '/spots', area, radius)
 
     if (!req.query.lat || !req.query.lon) {
       res.send(store.spots)

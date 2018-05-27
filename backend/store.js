@@ -152,10 +152,10 @@ const store = {
     db.ref('/device').on('value', snapshot => {
       store.device = snapshot.val()
       if (store.spots[0] && store.device[1]) {
-        store.spots[0] = store.device[0]
+        store.spots[0]['device'] = store.device[0]
       }
       if (store.spots[1] && store.device[1]) {
-        store.spots[1] = store.device[1]
+        store.spots[1]['device'] = store.device[1]
       }
     })
   },
