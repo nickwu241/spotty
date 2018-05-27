@@ -8,7 +8,15 @@ const PORT = process.env.PORT || 5000
 
 const DEFAULT_RADIUS = 5000
 
+store.setUpListeners()
+
+
 express()
+  .use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  })
   .use(express.static(path.join(__dirname, 'public')))
   .use(bodyParser.json())
   .set('views', path.join(__dirname, 'views'))
@@ -20,7 +28,7 @@ express()
       latitude: parseFloat(req.query.lat) || 0.0,
       longitude: parseFloat(req.query.lon) || 0.0
     }
-    console.log('/spots', area, radius)
+    console.log(Date.now(), '/spots', area, radius)
 
     if (!req.query.lat || !req.query.lon) {
       res.send(store.spots)
@@ -38,19 +46,12 @@ express()
     store.dbreset()
     res.send('OK')
   })
-  .get('/image/:path', (req, res) => {
-    const imagePath = req.params.path
-    console.log(imagePath)
-    imageprocess.licenseDetect(imagePath).then(detections => {
-      if (!detections) {
-        return
-      }
-
-      console.log(detections)
-    }).catch(err => {
-      console.error('Failed detecting license:', err)
-    })
-    imageprocess.hasCar(imagePath)
+  .post('/mode/:mode', (req, res) => {
+    console.log(`/mode/${req.params.mode}`)
+    store.setUpVisionMode(req.params.mode)
+    res.send('OK')
+  })
+  .get('/image', (req, res) => {
     res.send('OK')
   })
   .post('/users', (req, res) => {

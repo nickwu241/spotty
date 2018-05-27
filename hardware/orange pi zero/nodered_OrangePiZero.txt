@@ -1,0 +1,569 @@
+[
+    {
+        "id": "7d364f1e.40eb4",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ec54c4e6.6f6ce8",
+        "type": "firebase modify",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/camera",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 777.5,
+        "y": 162.99998474121094,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "489d2162.16c1",
+        "type": "file in",
+        "z": "7d364f1e.40eb4",
+        "name": "image",
+        "filename": "/home/tank/image.jpg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "x": 409.5,
+        "y": 48.400001525878906,
+        "wires": [
+            [
+                "6fa5eb5d.753f6c"
+            ]
+        ]
+    },
+    {
+        "id": "f2b7f65f.913a1",
+        "type": "http request",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "url": "",
+        "tls": "",
+        "x": 649.5,
+        "y": 51.799964904785156,
+        "wires": [
+            [
+                "f9979d16.b89f08",
+                "233ea008.e0381"
+            ]
+        ]
+    },
+    {
+        "id": "6fa5eb5d.753f6c",
+        "type": "function",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "func": "var request = {\n    'url': 'https://www.googleapis.com/upload/storage/v1/b/spotty-205321.appspot.com/o?uploadType=media&name=' + msg.filename,\n    'headers': {\n        'Content-Type': 'image/jpeg'\n    },\n    'payload': msg.payload\n}\nmsg = request\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 522.3333129882812,
+        "y": 49.633338928222656,
+        "wires": [
+            [
+                "f2b7f65f.913a1"
+            ]
+        ]
+    },
+    {
+        "id": "f9979d16.b89f08",
+        "type": "debug",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 815.3333129882812,
+        "y": 51.26667022705078,
+        "wires": []
+    },
+    {
+        "id": "41fd3410.bc002c",
+        "type": "alexa-home",
+        "z": "7d364f1e.40eb4",
+        "devicename": "Camera",
+        "inputtrigger": false,
+        "x": 300.50006103515625,
+        "y": 432,
+        "wires": [
+            [
+                "ec54c4e6.6f6ce8",
+                "35b39201.99a16e"
+            ]
+        ]
+    },
+    {
+        "id": "fd9f1e71.2f6a98",
+        "type": "debug",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 827.3333129882812,
+        "y": 399.1333465576172,
+        "wires": []
+    },
+    {
+        "id": "2080b255.304a1e",
+        "type": "inject",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "topic": "trigger",
+        "payload": "on",
+        "payloadType": "str",
+        "repeat": "4",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 96.33332824707031,
+        "y": 432.36669921875,
+        "wires": [
+            [
+                "41fd3410.bc002c"
+            ]
+        ]
+    },
+    {
+        "id": "536fc8eb.d33368",
+        "type": "exec",
+        "z": "7d364f1e.40eb4",
+        "command": "/home/tank/takePhoto.sh",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 235.0333251953125,
+        "y": 50.933326721191406,
+        "wires": [
+            [],
+            [
+                "489d2162.16c1"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "2669439b.952594",
+        "type": "mqtt in",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "topic": "Temperature",
+        "qos": "2",
+        "broker": "7f05728f.c89c4c",
+        "x": 121.5,
+        "y": 317.4000244140625,
+        "wires": [
+            [
+                "910652f8.848088",
+                "f7d6a69c.ada53",
+                "c78443c6.8548"
+            ]
+        ]
+    },
+    {
+        "id": "233ea008.e0381",
+        "type": "firebase modify",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/image/0",
+        "method": "set",
+        "value": "https://storage.googleapis.com/spotty-205321.appspot.com//home/tank/image.jpg",
+        "priority": "msg.priority",
+        "x": 912,
+        "y": 104,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "35b39201.99a16e",
+        "type": "trigger",
+        "z": "7d364f1e.40eb4",
+        "op1": "",
+        "op2": "",
+        "op1type": "pay",
+        "op2type": "pay",
+        "duration": "-10000",
+        "extend": false,
+        "units": "ms",
+        "reset": "off",
+        "bytopic": "all",
+        "name": "",
+        "x": 524.5,
+        "y": 432,
+        "wires": [
+            [
+                "fd9f1e71.2f6a98",
+                "536fc8eb.d33368",
+                "c4c0c6a7.90a8b8"
+            ]
+        ]
+    },
+    {
+        "id": "257394fa.e3485c",
+        "type": "mqtt in",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "topic": "Humidity",
+        "qos": "2",
+        "broker": "7f05728f.c89c4c",
+        "x": 102.5,
+        "y": 261.3999938964844,
+        "wires": [
+            [
+                "6dd3a4f9.6d5c1c",
+                "403fc09c.ac798",
+                "e0b586e4.be5368"
+            ]
+        ]
+    },
+    {
+        "id": "6dd3a4f9.6d5c1c",
+        "type": "firebase modify",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/device/0/humidity",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 946.5,
+        "y": 228.79998779296875,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "910652f8.848088",
+        "type": "firebase modify",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/device/0/temperature",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 962.5,
+        "y": 285.8000183105469,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "403fc09c.ac798",
+        "type": "ui_gauge",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "group": "8547700c.bb1968",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "30",
+        "seg2": "50",
+        "x": 335.5,
+        "y": 156.40000915527344,
+        "wires": []
+    },
+    {
+        "id": "f7d6a69c.ada53",
+        "type": "ui_gauge",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "group": "8547700c.bb1968",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "40",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "20",
+        "seg2": "30",
+        "x": 252.49998474121094,
+        "y": 523.4000244140625,
+        "wires": []
+    },
+    {
+        "id": "f7817486.0b5238",
+        "type": "mqtt in",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "topic": "Distance",
+        "qos": "2",
+        "broker": "7f05728f.c89c4c",
+        "x": 121.5,
+        "y": 378.40000915527344,
+        "wires": [
+            [
+                "2a1d49e0.450f06",
+                "8f9c1047.4295a",
+                "2687f3a9.95371c"
+            ]
+        ]
+    },
+    {
+        "id": "2a1d49e0.450f06",
+        "type": "ui_gauge",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "group": "8547700c.bb1968",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Distance",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "400",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 238.49998474121094,
+        "y": 569.7999877929688,
+        "wires": []
+    },
+    {
+        "id": "8f9c1047.4295a",
+        "type": "firebase modify",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "firebaseconfig": "",
+        "childpath": "/device/0/distance",
+        "method": "set",
+        "value": "msg.payload",
+        "priority": "msg.priority",
+        "x": 939,
+        "y": 342,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c4c0c6a7.90a8b8",
+        "type": "mqtt out",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "topic": "Alexa",
+        "qos": "",
+        "retain": "",
+        "broker": "7f05728f.c89c4c",
+        "x": 750.4999847412109,
+        "y": 460.99998474121094,
+        "wires": []
+    },
+    {
+        "id": "e0b586e4.be5368",
+        "type": "ui_chart",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "group": "7d0786b4.4a483",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Humidity",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 392.5,
+        "y": 190.40000915527344,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "c78443c6.8548",
+        "type": "ui_chart",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "group": "7d0786b4.4a483",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "25",
+        "ymax": "30",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 448.49998474121094,
+        "y": 526.4000091552734,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "2687f3a9.95371c",
+        "type": "ui_chart",
+        "z": "7d364f1e.40eb4",
+        "name": "",
+        "group": "7d0786b4.4a483",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "Distance",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "300",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "x": 440.49998474121094,
+        "y": 577.4000091552734,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "7f05728f.c89c4c",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "EMQTT",
+        "broker": "192.168.1.144",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "8547700c.bb1968",
+        "type": "ui_group",
+        "z": "",
+        "name": "Gauges",
+        "tab": "7f5cdf58.172",
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "7d0786b4.4a483",
+        "type": "ui_group",
+        "z": "",
+        "name": "Charts",
+        "tab": "7f5cdf58.172",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "7f5cdf58.172",
+        "type": "ui_tab",
+        "z": "",
+        "name": "Home",
+        "icon": "dashboard"
+    }
+]
