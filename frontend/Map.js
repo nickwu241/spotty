@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 import { Scrollview, Dimensions, StyleSheet, Text, View, Image, ScrollView, RefreshControl} from 'react-native';
 import MapView from 'react-native-maps';
 import { Easing, Animated, AppRegistry, TextInput, Button, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback,} from 'react-native';
+
+import Polyline from '@mapbox/polyline';
+
+
+
+
 const { width, height } = Dimensions.get("window");
+const API_URL = "https://569d46a7.ngrok.io";
 
 const CARD_HEIGHT = height / 4;
 const CARD_WIDTH = CARD_HEIGHT - 50;
@@ -35,15 +42,15 @@ class FadeInView extends Component {
           }
       ).start();
   }
-  
+
   render() {
     let { fadeAnim } = this.state;
-    
+
     return (
-      <Animated.View                 
+      <Animated.View
         style={{
           backgroundColor: "white",
-          height: fadeAnim,        
+          height: fadeAnim,
         }}
       >
             <TouchableHighlight onPress={this.toggle.bind(this)} underlayColor="white" style = {{borderTopWidth: 1, height: 20}}>
@@ -79,16 +86,16 @@ class FadeInView2 extends Component {
           }
       ).start();
   }
-  
+
   render() {
     let { fadeAnim } = this.state;
-    
+
     return (
-      <Animated.View                 
+      <Animated.View
         style={{
           top: 0,
           backgroundColor: "white",
-          height: fadeAnim,        
+          height: fadeAnim,
         }}
       >
             <TouchableHighlight onPress={this.toggle.bind(this)} underlayColor="white" style = {{borderTopWidth: 1, height: "auto"}}>
@@ -106,78 +113,17 @@ export default class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: null,
-      longitude: null,
+      latitude: 43.7860579,
+      longitude: -79.349437,
       error:null,
+      coords: [],
       selected: 0,
       radius: 15,
       fadeAnim: new Animated.Value(20),
       expanded: true,
       springValue: new Animated.Value(0.5),
       selectMarkers: [],
-      markers: [
-        {
-                  uniqueId : 1,
-                  coordinate: {
-                    latitude: 43.7860579,
-                    longitude: -79.349437,
-                  },
-                  title: "Best Place",
-                  description: "This is 10/10 driveway",
-                  price:0,
-                  selected: false,
-                  image: Images[0],
-        },
-        {
-                  uniqueId : 2,
-                  coordinate : {
-                    latitude: 43.6950552,
-                    longitude: -79.4183759,
-                  },
-                  title: "Second Best Place",
-                  description: "This is 8/10 driveway",
-                  price:0,
-                  selected: false,
-                  image: Images[1],
-
-
-        },
-        {
-                  uniqueId : 3,
-                  coordinate: {
-                    latitude: 43.6944823,
-                    longitude: -79.4599204,
-                  },
-                  title: "Meh",
-                  description: "It sorta counts",
-                  price:0,
-                  selected: false,
-                  image: Images[2],        },
-        {
-                  uniqueId : 4,
-                  coordinate : {
-                    latitude: 43.6922662,
-                    longitude: -79.4867893,
-                  },
-                  title: "yikes",
-                  description: "it broke",
-                  price:0,
-                  selected: false,
-                  image: Images[3],
-        },
-        {
-                  uniqueId : 5,
-                  coordinate : {
-                    latitude: 43.6487793,
-                    longitude: -79.4007719,
-                  },
-                  title: "doggo",
-                  description: "This is 10/10 dog, 0/10 for parking",
-                  price:0,
-                  selected: false,
-                  image: Images[4],
-        }
-      ]
+      markers: []
     }
   }
 
@@ -206,8 +152,31 @@ export default class Map extends Component {
   }
 
    _onPressButton(){
-    console.log("MOVE");
+
+    var coord = this.state.latitude.toString() + ', ' + this.state.longitude.toString()
+    var dest = this.state.selectMarkers[0].latitude.toString() + ', ' + this.state.selectMarkers[0].longitude.toString()
+    console.log(coord)
+    this.getDirections(coord, dest)
    }
+
+   async getDirections(startLoc, destinationLoc) {
+    try {
+        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }`)
+        let respJson = await resp.json();
+        let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+        let coords = points.map((point, index) => {
+            return  {
+                latitude : point[0],
+                longitude : point[1]
+            }
+        })
+        this.setState({coords: coords})
+        return coords
+        this.forceUpdate();
+    } catch(error) {
+        return error
+    }
+  }
    springAnimation = () => {
     Animated.spring(this.state.springValue, {
       toValue: 4,
@@ -240,9 +209,9 @@ export default class Map extends Component {
     var markers = this.state.markers || [];
     var selectMarkers = this.state.selectMarkers || [];
     return (
-      
+
       <View style={styles.container}>
-        
+
         <MapView style={styles.map}
           ref={map => {this.map = map}}
           initialRegion={{
@@ -258,14 +227,14 @@ export default class Map extends Component {
           return (
               <MapView.Marker key={index} coordinate={marker.coordinate}>
                 <View style={styles.markerWrap}>
-                  <Animated.View 
-                  style={[styles.ring, 
+                  <Animated.View
+                  style={[styles.ring,
             { transform: [{ scale: this.state.springValue }]}]}/>
                   <View style={styles.marker} />
                 </View>
               </MapView.Marker>
             );
-        })}  
+        })}
 
           {selectMarkers.map((marker, index) => {
           return (
@@ -274,7 +243,7 @@ export default class Map extends Component {
                 onRegionChangeComplete={() => this.marker.showCallout()}>
               </MapView.Marker>
             );
-        })}  
+        })}
         </MapView>
         <Animated.ScrollView
           horizontal
@@ -312,7 +281,7 @@ export default class Map extends Component {
             </TouchableOpacity>
           ))}
         <TouchableNativeFeedback
-          onPress={this._onPressButton}
+          onPress={this._onPressButton.bind(this)}
           background={TouchableNativeFeedback.SelectableBackground()}>
         <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
           <Text style={{margin: 30}}>Button</Text>
@@ -326,33 +295,43 @@ export default class Map extends Component {
                 style={styles.text}
                 placeholder="Find parking spots a max distance away..."
                 returnKeyLabel = {"next"}
-                onChangeText={this.handleLocation}
+                onChangeText={this.handleRadius}
               />
             </View>
-            <Button 
+            <Button
               style = {{flex: 0, width: 20}}
-              onPress={() => this.move(this.state.location, this.state.destination)}
+              onPress={() => fetch(`${API_URL}/spots?lat=${latitude}&lon=${longitude}&radius=${this.state.radius}`)
+                              .then((markers) => {
+                                  markers.forEach((marker) => {
+                                    let newMarker = {
+                                      uniqueId : marker.id,
+                                      coordinate: {
+                                        latitude: marker.latitude,
+                                        longitude: marker.longitude,
+                                      },
+                                      title: marker.title,
+                                      description: marker.description,
+                                      price:marker.price,
+                                      selected: false,
+                                      image: marker.image.uri,
+                                    }
+                                  this.setState({
+                                    markers: this.state.markers.concat([newMarker])
+                                  })
+                                })
+                              })
+                              .catch(err)=> {
+                                console.log(err);
+                              }}
               title="Go!"
               color="#841584"
             />
           </View>
         </View>
-        <FadeInView2>
-          <View style = {styles.description}>
-            <Image
-                source={this.state.markers[this.state.selected].image}
-                style={styles.boardImage}
-                resizeMode="cover"
-              />
-            <View style={styles.texts}>
-              <Text> Price: {this.state.markers[this.state.selected].price} </Text>
-              <Text> Description: {this.state.markers[this.state.selected].description} </Text>
-            </View>
-          </View>
-        </FadeInView2>
-        <FadeInView 
+
+        <FadeInView
           ref={component => this._mainMenu = component}
-        > 
+        >
           <View style = {styles.description}>
             <Image
                 source={this.state.markers[this.state.selected].image}
@@ -388,8 +367,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0
   },
-  text: { 
-    backgroundColor:'rgba(0,0,0,0.4)', 
+  text: {
+    backgroundColor:'rgba(0,0,0,0.4)',
     width: 300,
     borderColor: 'grey',
     borderWidth: 1,
@@ -398,11 +377,11 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   nav: {
-    position: 'absolute', 
-    top: 0, 
+    position: 'absolute',
+    top: 0,
     width: "100%",
-    padding: 30, 
-    backgroundColor: 'rgba(0,0,0,1)',    
+    padding: 30,
+    backgroundColor: 'rgba(0,0,0,1)',
   },
   scrollView: {
     backgroundColor: 'rgba(0,0,0,0.2)',
@@ -470,7 +449,7 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    display: "flex", 
+    display: "flex",
     width: "100%",
     height: "100%",
     padding: 10,
@@ -487,7 +466,7 @@ const styles = StyleSheet.create({
   texts: {
     flex:1,
     width: "100%",
-    height: "100%", 
+    height: "100%",
     flexGrow: 2,
     padding: 10,
   },
@@ -496,6 +475,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.7)',
     width: "100%"
-    
+
   },
 });
