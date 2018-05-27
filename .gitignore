@@ -9,7 +9,3 @@ npm-debug.log
 
 # Secret
 spotty-ruhacks-firebase-adminsdk.json
-
-# Docker
-Dockerfile
-docker-compose.yml
