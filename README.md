@@ -2,6 +2,13 @@
 
 Do you have parking space you never use? Spotty can help advertise this space for you and help other drivers who are looking for parking. Using IoT, Spotty can use cameras and sensors to provide automated security, and status of your parking space ensuring that your property is safe.
 
+Spotty is built by:
+
+* [Tancred Yip](https://github.com/tancredyip)
+* [Brandon Watada](https://github.com/Bwatada)
+* [Hongliang Wang](https://github.com/hongliangW)
+* [Nicholas Wu](https://github.com/nickwu241)
+
 ## Hardware to Backend
 
 Flow
