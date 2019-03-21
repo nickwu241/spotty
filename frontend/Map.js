@@ -3,15 +3,16 @@ import { Scrollview, Dimensions, StyleSheet, View, Image, ScrollView, RefreshCon
 import MapView from 'react-native-maps';
 import { Easing, Animated, AppRegistry, TextInput, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback,} from 'react-native';
 import Polyline from '@mapbox/polyline';
-import { Container, Button, Text } from 'react-native';
+import { Container, Button, Text, Modal } from 'react-native';
 import axios from 'axios';
+import { CheckBox } from 'react-native-elements'
 const { width, height } = Dimensions.get("window");
 
 const CARD_HEIGHT = height / 4;
 const CARD_WIDTH = CARD_HEIGHT - 50;
 const Images = [
   { uri: "https://i.imgur.com/W4ETKKQ.jpg" },
-  { uri: "https://i.imgur.com/YjPo3PR.jpg" },
+  { uri: "http://2.bp.blogspot.com/-khzexD9EDD4/VVdlJXsw4mI/AAAAAAAAXH8/KkqNY3RtJYg/s1600/parking.jpg" },
   { uri: "https://i.imgur.com/nzUxP26.jpg" },
   { uri: "https://i.imgur.com/lHVuZ7g.jpg" },
   { uri: "https://i.imgur.com/L01KF.jpg" }
@@ -22,6 +23,7 @@ class FadeInView extends Component {
     expanded: true,
     text:"No"
   }
+  
   toggle(){
       let initialValue    = this.state.expanded? 20 : 250,
           finalValue      = this.state.expanded? 250 : 20;
@@ -109,6 +111,7 @@ export default class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      modalVisible:false,
       latitude: 43.7860579,
       longitude: -79.349437,
       error:null,
@@ -119,31 +122,44 @@ export default class Map extends Component {
       expanded: true,
       springValue: new Animated.Value(0.5),
       selectMarkers: [],
+      modalVisible: false,
+      hourly:false,
+      daily:false,
+      monthly:false,
       markers: [
         {
                   uniqueId : 1,
                   coordinate: {
-                    latitude: 43.7860579,
-                    longitude: -79.349437,
+                    latitude: 43.2559023,
+                    longitude: -79.9240317,
                   },
-                  title: "Best Place",
+                  title: "Best Driveway",
                   description: "This is 10/10 driveway",
                   price:0,
                   selected: false,
                   image: Images[0],
+                  rate: {
+                    hourly: 1,
+                    daily: 4,
+                    monthly:20,
+                  }
         },
         {
                   uniqueId : 2,
                   coordinate : {
-                    latitude: 43.6950552,
-                    longitude: -79.4183759,
+                    latitude: 43.2620348,
+                    longitude: -79.930182,
                   },
-                  title: "Second Best Place",
-                  description: "This is 8/10 driveway",
+                  title: "Mac Parking Lot",
+                  description: "Why would anyone park here",
                   price:0,
                   selected: false,
                   image: Images[1],
-
+                  rate: {
+                    hourly: 100,
+                    daily: 400,
+                    monthly:2000,
+                  }
 
         },
         {
@@ -156,7 +172,13 @@ export default class Map extends Component {
                   description: "It sorta counts",
                   price:0,
                   selected: false,
-                  image: Images[2],        },
+                  image: Images[2],
+                  rate: {
+                    hourly: 10,
+                    daily: 40,
+                    monthly:200,
+                  }
+                },
         {
                   uniqueId : 4,
                   coordinate : {
@@ -168,6 +190,11 @@ export default class Map extends Component {
                   price:0,
                   selected: false,
                   image: Images[3],
+                  rate: {
+                    hourly: 10,
+                    daily: 40,
+                    monthly:200,
+                  }
         },
         {
                   uniqueId : 5,
@@ -180,11 +207,20 @@ export default class Map extends Component {
                   price:0,
                   selected: false,
                   image: Images[4],
+                  rate: {
+                    hourly: 10,
+                    daily: 40,
+                    monthly:200,
+                  }
         }
       ]
     }
   }
-
+  setModalVisible(visible) {
+    this.setState({
+      modalVisible:visible,
+    })
+  }
   componentWillMount() {
     this.index = 0;
     this.animatedValue = new Animated.Value(0);
@@ -210,11 +246,16 @@ export default class Map extends Component {
   }
 
    _onPressButton(){
-    console.log("hi")
-    var coord = this.state.latitude.toString() + ', ' + this.state.longitude.toString()
-    var dest = this.state.selectMarkers[0].latitude.toString() + ', ' + this.state.selectMarkers[0].longitude.toString()
-    console.log(coord)
-    this.getDirections(coord, dest)
+     if(this.state.modalVisible) {
+      var coord = this.state.latitude.toString() + ', ' + this.state.longitude.toString()
+      var dest = this.state.selectMarkers[0].latitude.toString() + ', ' + this.state.selectMarkers[0].longitude.toString()
+      console.log(coord)
+      this.getDirections(coord, dest);
+      this.setModalVisible(false);
+      Alert.alert('You have successfully reserved '+ this.state.markers[this.state.selected].title);
+     } else {
+      this.setModalVisible(true);
+     }
    }
 
    async getDirections(startLoc, destinationLoc) {
@@ -259,6 +300,7 @@ export default class Map extends Component {
                   price: obj[i].price,
                   selected: false,
                   image: obj[i].image,
+                  rate: obj[i].rate,
               }
             )
         }
@@ -303,12 +345,23 @@ export default class Map extends Component {
     return (
       
       <View style={styles.container}>
-        
+        <Modal
+        animationType="fade"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            Alert.alert('You have successfully reserved.');
+          }}>
+          <View>
+            <Text>RESERVE</Text>
+            <Button title="Reserve" onPress={this._onPressButton.bind(this)}></Button>
+          </View>
+        </Modal>
         <MapView style={styles.map}
           ref={map => {this.map = map}}
           initialRegion={{
-            latitude:latitude,
-            longitude:longitude,
+            latitude:43.26321,
+            longitude:-79.9197863,
             latitudeDelta: 0.2,
             longitudeDelta:0.2,
           }}
@@ -389,10 +442,14 @@ export default class Map extends Component {
                 resizeMode="cover"
               />
             <View style={styles.texts}>
-              <Text> Price: {this.state.markers[this.state.selected].price} </Text>
+              <Text> Prices: </Text>
+              <Text>  Hourly: {this.state.markers[this.state.selected].rate.hourly}.00 $</Text>
+              <Text>  Daily: {this.state.markers[this.state.selected].rate.daily}.00 $</Text>
+              <Text>  Monthly: {this.state.markers[this.state.selected].rate.monthly}.00 $</Text>
               <Text> Description: {this.state.markers[this.state.selected].description} </Text>
               <Button
-                  onPress={this._onPressButton.bind(this)}>
+                  onPress={this._onPressButton.bind(this)}
+                  title= "Reserve">
                 <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
                   <Text style={{margin: 30}}>Button</Text>
                 </View>
@@ -522,8 +579,7 @@ const styles = StyleSheet.create({
   texts: {
     flex:1,
     width: "100%",
-    height: "100%", 
-    flexGrow: 2,
+    height: "100%",
     padding: 10,
   },
   button: {

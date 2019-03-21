@@ -4,14 +4,14 @@ import LoginForm from './LoginForm.js';
 import Map from './Map.js';
 import ForgetPassword from './ForgetPassword.js';
 const user = {
-  email: '123@abc.com',
-  password: '123456'
+  email: 'test',
+  password: '1'
 }
 
 export default class Login extends React.Component {
 
   state = {
-    isLoggedIn: false,
+    isLoggedIn: true,
     email: '',
     password: '',
     isForgettingPassword: false

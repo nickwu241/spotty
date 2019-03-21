@@ -4,14 +4,14 @@ import LoginForm from './LoginForm.js';
 
 
 const user = {
-  email: '123@abc.com',
-  password: '123456'
+  email: '1',
+  password: '1'
 }
 
 export default class Login extends React.Component {
 
   state = {
-    isLoggedIn: false,
+    isLoggedIn: true,
     email: '',
     password: ''
   }
