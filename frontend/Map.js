@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Scrollview, Dimensions, StyleSheet, Text, View, Image, ScrollView, RefreshControl} from 'react-native';
+import { Scrollview, Dimensions, StyleSheet, View, Image, ScrollView, RefreshControl} from 'react-native';
 import MapView from 'react-native-maps';
-import { Easing, Animated, AppRegistry, TextInput, Button, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback,} from 'react-native';
+import { Easing, Animated, AppRegistry, TextInput, Alert, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback,} from 'react-native';
 import Polyline from '@mapbox/polyline';
+import { Container, Button, Text } from 'react-native';
 import axios from 'axios';
 const { width, height } = Dimensions.get("window");
 
@@ -218,9 +219,11 @@ export default class Map extends Component {
 
    async getDirections(startLoc, destinationLoc) {
     try {
-        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }`)
+        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=AIzaSyCnmLj9-Ah9jOFCDERqES2NqH0rzkq8OOw`)
         let respJson = await resp.json();
-        let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+        console.log(respJson);
+        //let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
+        let points = Polyline.decode("ar`gGtfvfN|HpC|@\\`FfBjBj@x@T");
         let coords = points.map((point, index) => {
             return  {
                 latitude : point[0],
@@ -228,8 +231,9 @@ export default class Map extends Component {
             }
         })
         this.setState({coords: coords})
-        return coords
+        console.log(coords);
         this.forceUpdate();
+        return coords;
     } catch(error) {
         return error
     }
@@ -373,32 +377,7 @@ export default class Map extends Component {
               </View>
             </TouchableOpacity>
           ))}
-        <TouchableNativeFeedback
-          onPress={this._onPressButton.bind(this)}
-          background={TouchableNativeFeedback.SelectableBackground()}>
-        <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
-          <Text style={{margin: 30}}>Button</Text>
-        </View>
-      </TouchableNativeFeedback>
         </Animated.ScrollView>
-        <View style = {styles.nav}>
-          <View style = {{flexDirection: 'row'}}>
-            <View>
-              <TextInput
-                style={styles.text}
-                placeholder="Find parking spots a max distance away..."
-                returnKeyLabel = {"next"}
-                onChangeText={this.handleLocation}
-              />
-            </View>
-            <Button 
-              style = {{flex: 0, width: 20}}
-              onPress={this.fetchValues.bind(this)}
-              title="Go!"
-              color="#841584"
-            />
-          </View>
-        </View>
         
         <FadeInView 
           ref={component => this._mainMenu = component}
@@ -406,12 +385,18 @@ export default class Map extends Component {
           <View style = {styles.description}>
             <Image
                 source={this.state.markers[this.state.selected].image}
-                style={styles.boardImage}
+                style={styles.cardImage}
                 resizeMode="cover"
               />
             <View style={styles.texts}>
               <Text> Price: {this.state.markers[this.state.selected].price} </Text>
               <Text> Description: {this.state.markers[this.state.selected].description} </Text>
+              <Button
+                  onPress={this._onPressButton.bind(this)}>
+                <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
+                  <Text style={{margin: 30}}>Button</Text>
+                </View>
+              </Button>
             </View>
           </View>
         </FadeInView>
