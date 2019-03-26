@@ -5,7 +5,6 @@ import { Easing, Animated, AppRegistry, TextInput, Alert, TouchableHighlight, To
 import Polyline from '@mapbox/polyline';
 import { Container, Button, Text, Modal } from 'react-native';
 import axios from 'axios';
-import { CheckBox } from 'react-native-elements'
 const { width, height } = Dimensions.get("window");
 
 const CARD_HEIGHT = height / 4;
@@ -111,7 +110,9 @@ export default class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      type:"hourly",
       modalVisible:false,
+      modalVisible2: false,
       latitude: 43.7860579,
       longitude: -79.349437,
       error:null,
@@ -126,12 +127,16 @@ export default class Map extends Component {
       hourly:false,
       daily:false,
       monthly:false,
+      hourly: "3",
+      daily: "40",
+      monthly:"300",
+      description: "Luxury Hamilton driveway.",
       markers: [
         {
                   uniqueId : 1,
                   coordinate: {
-                    latitude: 43.2559023,
-                    longitude: -79.9240317,
+                    latitude: 43.25088,
+                    longitude: -79.91908,
                   },
                   title: "Best Driveway",
                   description: "This is 10/10 driveway",
@@ -221,6 +226,11 @@ export default class Map extends Component {
       modalVisible:visible,
     })
   }
+  setModalVisible2(visible) {
+    this.setState({
+      modalVisible2:visible,
+    })
+  }
   componentWillMount() {
     this.index = 0;
     this.animatedValue = new Animated.Value(0);
@@ -252,19 +262,48 @@ export default class Map extends Component {
       console.log(coord)
       this.getDirections(coord, dest);
       this.setModalVisible(false);
-      Alert.alert('You have successfully reserved '+ this.state.markers[this.state.selected].title);
+      Alert.alert('You have successfully reserved '+ this.state.markers[this.state.selected].title + "at a(n) " + this.state.type + " rate.");
      } else {
       this.setModalVisible(true);
      }
    }
+   _onPressButton2(){
+    if(this.state.modalVisible2) {
+     var coord = this.state.latitude.toString() + ', ' + this.state.longitude.toString()
+     var dest = this.state.selectMarkers[0].latitude.toString() + ', ' + this.state.selectMarkers[0].longitude.toString()
+     console.log(coord)
+     this.getDirections(coord, dest);
+     this.setModalVisible(false);
+     Alert.alert('You have successfully reserved '+ this.state.markers[this.state.selected].title + "at a(n) " + this.state.type + " rate.");
+    } else {
+     this.setModalVisible2(true);
+    }
+  }
+   _onPressRateButton(rate){
+      var coord = this.state.latitude.toString() + ', ' + this.state.longitude.toString()
+      var dest = this.state.selectMarkers[0].latitude.toString() + ', ' + this.state.selectMarkers[0].longitude.toString()
+      console.log(coord)
+      this.getDirections(coord, dest);
+     this.setState({type: rate});
+     this.setModalVisible(false);
+     Alert.alert('You have successfully reserved '+ this.state.markers[this.state.selected].title + " at a(n) " + rate + " rate of " + this.state.markers[this.state.selected].rate.hourly+ ".00.");
 
+   }
+   _onPressEditButton(rate, description) {
+     this.setState({
+       rate: rate,
+       description: description,
+     });
+     this.setModalVisible2(false);
+   }
    async getDirections(startLoc, destinationLoc) {
     try {
-        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=AIzaSyCnmLj9-Ah9jOFCDERqES2NqH0rzkq8OOw`)
+        let resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${ startLoc }&destination=${ destinationLoc }&key=AIzaSyDBkFlNkBDZO78HHjofbA9-B91p2hHRFoA
+        `)
         let respJson = await resp.json();
         console.log(respJson);
         //let points = Polyline.decode(respJson.routes[0].overview_polyline.points);
-        let points = Polyline.decode("ar`gGtfvfN|HpC|@\\`FfBjBj@x@T");
+        let points = Polyline.decode("at`gGjgwfNMzFKt@RDxABbIFr@GtBKp@@Pl@b@t@FbA?JFHJDV@fCENAdBGl@e@~@MZEvAFl@Vf@VVVLf@P@jANdFJlD?vADhBFHBn@PhPFpEjEk@JGl@cEdAiI");
         let coords = points.map((point, index) => {
             return  {
                 latitude : point[0],
@@ -335,6 +374,12 @@ export default class Map extends Component {
     this.map.animateToCoordinate(coordinate, 1000);
     this.forceUpdate();
    }
+   _onCancelButton() {
+     this.setModalVisible(false);
+   }
+   _onCancelButton2() {
+     this.setModalVisible2(false);
+   }
   render() {
     console.disableYellowBox = true;
     var latitude = this.state.latitude;
@@ -343,19 +388,75 @@ export default class Map extends Component {
     var markers = this.state.markers || [];
     var selectMarkers = this.state.selectMarkers || [];
     return (
-      
-      <View style={styles.container}>
+        <View style={styles.container}>
+          <Modal
+          animationType="fade"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              Alert.alert('You have successfully reserved.');
+            }}>
+            <View
+              style={{
+                alignContent: "center",
+                top: 0,
+                backgroundColor: 'rgba(0,0,0,0.4)',
+              }}>
+              <View style={
+              { 
+                backgroundColor: "white",
+              }
+              }>
+                <Text>Press save to save changes:</Text>
+                <Button title="Hourly" onPress={this._onPressRateButton.bind(this,"hourly")}></Button>
+                <Button title="Daily" onPress={this._onPressRateButton.bind(this,"daily")}></Button>
+                <Button title="Monthly" onPress={this._onPressRateButton.bind(this,"monthly")}></Button>
+                <Button title="Cancel" onPress={this._onCancelButton.bind(this)}></Button>
+              </View>
+            </View>
+        </Modal>
         <Modal
-        animationType="fade"
-          transparent={false}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            Alert.alert('You have successfully reserved.');
-          }}>
-          <View>
-            <Text>RESERVE</Text>
-            <Button title="Reserve" onPress={this._onPressButton.bind(this)}></Button>
-          </View>
+          animationType="fade"
+            transparent={true}
+            visible={this.state.modalVisible2}
+            onRequestClose={() => {
+              Alert.alert('You have successfully reserved.');
+            }}>
+            <View
+              style={{
+                alignContent: "center",
+                top: 0,
+                backgroundColor: 'rgba(0,0,0,0.4)',
+              }}>
+              <View style={
+              { 
+                backgroundColor: "white",
+              }
+              }>
+                <Text>Choose the rate to reserve:</Text>
+                <TextInput
+                  style={{height: 40, borderColor: 'black', borderWidth: 1}}
+                  onChangeText={(hourly) => this.setState({hourly})}
+                  value={this.state.hourly}
+                />
+                <TextInput
+                  style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                  onChangeText={(daily) => this.setState({daily})}
+                  value={this.state.daily}
+                />
+                <TextInput
+                  style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                  onChangeText={(monthly) => this.setState({monthly})}
+                  value={this.state.monthly}
+                />
+                <TextInput
+                  style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                  onChangeText={(description) => this.setState({description})}
+                  value={this.state.description}
+                />
+                <Button title="Save" onPress={this._onCancelButton2.bind(this)}></Button>
+              </View>
+            </View>
         </Modal>
         <MapView style={styles.map}
           ref={map => {this.map = map}}
@@ -457,6 +558,29 @@ export default class Map extends Component {
             </View>
           </View>
         </FadeInView>
+        <FadeInView2>
+          <View style = {styles.description}>
+            <Image
+                source={{uri:"https://shademaster.com/luxury-landscapes/photo/xlarge/173"}}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            <View style={styles.texts}>
+              <Text> Prices: </Text>
+              <Text>  Hourly: {this.state.hourly}.00 $</Text>
+              <Text>  Daily: {this.state.daily}.00 $</Text>
+              <Text>  Monthly: {this.state.monthly}.00 $</Text>
+              <Text> Description: {this.state.description} </Text>
+              <Button
+                  onPress={this._onPressButton2.bind(this)}
+                  title= "Edit Driveway">
+                <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
+                  <Text style={{margin: 30}}>Button</Text>
+                </View>
+              </Button>
+            </View>
+          </View>
+        </FadeInView2>
       </View>
     );
   }

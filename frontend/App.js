@@ -11,7 +11,7 @@ const user = {
 export default class Login extends React.Component {
 
   state = {
-    isLoggedIn: true,
+    isLoggedIn: false,
     email: '',
     password: '',
     isForgettingPassword: false
